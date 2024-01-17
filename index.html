@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Data Display</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+    <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.js"></script>
+
+</head>
+<body>
+    <div id="csvData"></div>
+
+
+
+    <script>
+        // Define a function to fetch and display CSV data
+        function fetchCSVData() {
+            htmx.ajax({
+                url: 'https://media.githubusercontent.com/media/datablist/sample-csv-files/main/files/customers/customers-100.csv',
+                headers: { 'Content-Type': 'text/csv' },
+                success: function (response) {
+                    // Assuming your CSV data is in plain text format
+                    document.getElementById('csvData').innerHTML = response;
+                }
+            });
+        }
+
+        // Call the function when the page loads
+        window.onload = function () {
+            fetchCSVData();
+        };
+    </script>
+  
+</body>
+</html>
