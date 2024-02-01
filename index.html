@@ -1,43 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Ingredients for our potion -->
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSV Data Display</title>
-    <style>
-        /* Add your CSS styles here */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-    </style>
-    <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.js"></script>
-
+    <title>Random Quote Potion</title>
+    
+    <!-- Magic potion recipe includes a special library -->
+    <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
 </head>
 <body>
-    <div id="csvData"></div>
 
+    <!-- Title of our magical potion -->
+    <h1>Random Quote Generator</h1>
 
+    <!-- Button acts as a magic wand to trigger our potion -->
+    <button id="getQuoteButton" hx-get="https://github.com/unicornlaunching/htmxcsv/blob/main/quotes.json?raw=true" hx-trigger="click" hx-target="#quoteContainer">
+        Cast the Spell: Get Random Quote
+    </button>
 
-    <script>
-        // Define a function to fetch and display CSV data
-        function fetchCSVData() {
-            htmx.ajax({
-                url: 'https://media.githubusercontent.com/media/datablist/sample-csv-files/main/files/customers/customers-100.csv',
-                headers: { 'Content-Type': 'text/csv' },
-                success: function (response) {
-                    // Assuming your CSV data is in plain text format
-                    document.getElementById('csvData').innerHTML = response;
-                }
-            });
+    <!-- The container where our magical quotes will appear -->
+    <div id="quoteContainer"></div>
+
+ <!-- Magical script to handle the outcome of our potion -->
+<script>
+    document.getElementById('getQuoteButton').addEventListener('htmx:afterRequest', function(event) {
+        // The magical cauldron where the quotes appear
+        var quoteContainer = document.getElementById('quoteContainer');
+
+        try {
+            // The essence of the potion - the response from the magical realm
+            var response = JSON.parse(event.detail.xhr.responseText);
+
+            // Extracting the spell's text and the author's identity
+            var quoteText = response.content;
+            var author = response.author;
+
+            // Clearing the cauldron to make space for the new magic
+            quoteContainer.innerHTML = '';
+
+            // Placing the newly conjured magic (quote and author) into the cauldron
+            quoteContainer.insertAdjacentHTML('beforeend', '<p>' + quoteText + '</p><p>— ' + author + '</p>');
+        } catch (error) {
+            console.error("Error parsing JSON:", error);
+            quoteContainer.innerHTML = '<p>Failed to retrieve a quote. Please try again later.</p>';
         }
+    });
 
-        // Call the function when the page loads
-        window.onload = function () {
-            fetchCSVData();
-        };
-    </script>
-  
+    document.getElementById('getQuoteButton').addEventListener('htmx:sendError', function(event) {
+        console.error("Error sending the request:", event.detail);
+        var quoteContainer = document.getElementById('quoteContainer');
+        quoteContainer.innerHTML = '<p>Failed to retrieve a quote. Please try again later.</p>';
+    });
+</script>
+
 </body>
 </html>
